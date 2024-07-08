@@ -16,14 +16,27 @@ export default function TabLayout() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: 60, // Adjust the height as needed
+          height: 60,
+          backgroundColor: '#fff',
+          borderRadius: 30,
+          position: 'absolute',
+          bottom: 20,
+          left: 20,
+          right: 20,
+          borderTopWidth: 0,
+          elevation: 10,
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
         },
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ color }) => (
             <HomeIcon color={color} />
           ),
         }}
@@ -32,7 +45,7 @@ export default function TabLayout() {
         name="icon2"
         options={{
           title: 'Page 2',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ color }) => (
             <Icon2 color={color} />
           ),
         }}
@@ -60,7 +73,7 @@ export default function TabLayout() {
         name="fav"
         options={{
           title: 'Favorites',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ color }) => (
             <FavIcon color={color} />
           ),
         }}
@@ -69,7 +82,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ color }) => (
             <ProfileIcon color={color} />
           ),
         }}
@@ -92,4 +105,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-

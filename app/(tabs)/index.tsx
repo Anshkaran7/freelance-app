@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, Dimensions, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, Dimensions, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { Ionicons } from '@expo/vector-icons';
-import { BellIcon } from '@/components/navigation/Icon';
+import { BellIcon, CommentIcon, FilterIcon, FlameIcon, FollowIcon, LikeIcon, SaveIcon, ShareIcon } from '@/components/navigation/Icon';
 import Dropdown from '@/components/ui/DropDown';
 import { Picker } from '@react-native-picker/picker';
+import Card from '@/components/ui/Card';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -24,6 +25,8 @@ const posts = [
     likes: 9200,
     comments: 9200,
     category: 'hinduism',
+    timestamp: '2 hours ago',
+    views: 1000
   },
   {
     id: '2',
@@ -37,6 +40,8 @@ const posts = [
     likes: 8000,
     comments: 8000,
     category: 'politics',
+    timestamp: '3 hours ago',
+    views: 1000
   },
 ];
 
@@ -80,65 +85,44 @@ const PostsScreen: React.FC = () => {
 
     return (
       <View style={styles.card}>
-        <View>
-          <View style={styles.cardHeader}>
-            <Image source={item.user.avatar} style={styles.avatar} />
-            <View>
-              <Text style={styles.username}>{item.user.name}</Text>
-              <View style={{ flexDirection: 'row', gap: 7, alignItems: 'center' }}>
-                <Text style={styles.usernameSecondary}>{item.user.username}</Text>
-                <Text style={styles.timestamp}>1 hour ago</Text>
-              </View>
-            </View>
+        <View style={styles.cardHeader}>
+          <Image source={item.user.avatar} style={styles.avatar} />
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.username}>{item.user.name}</Text>
+            <Text style={styles.timestamp}>{item.timestamp}</Text>
           </View>
-          <TouchableOpacity
-            onPress={() => setDropdownVisible(dropdownVisible === item.id ? null : item.id)}
-            style={styles.ellipsisButton}
-          >
-            <Ionicons name="ellipsis-horizontal" size={24} color="#6A2600" />
+          <TouchableOpacity style={styles.followButton}>
+            <FollowIcon width={16} height={16} />
+            <Text style={styles.followButtonText}>Follow</Text>
           </TouchableOpacity>
-          {dropdownVisible === item.id && (
-            <Dropdown
-              onCopy={() => {
-                // Implement your copy logic here
-                console.log('Copy post');
-                setDropdownVisible(null);
-              }}
-              onReport={() => {
-                // Implement your report logic here
-                console.log('Report post');
-                setDropdownVisible(null);
-              }}
-            />
-          )}
         </View>
-        <Text style={styles.cardText}>{item.text}</Text>
         <Image source={item.image} style={styles.cardImage} />
         <View style={styles.cardFooter}>
           <TouchableOpacity
             style={[
               styles.likeButton,
-              { backgroundColor: isLiked ? '#FF5D01' : '' },
+
             ]}
             onPress={() => handleLike(item.id)}
           >
-            <Ionicons name="heart" size={16} color={isLiked ? '#fff' : '#3D3D3D'} />
-            <Text style={[styles.iconText, { color: isLiked ? '#fff' : '#3D3D3D' }]}>{formatNumber(item.likes)}</Text>
+            <LikeIcon width={16} height={16} color={isLiked ? '#FF7F30' : '#3D3D3D'} />
+            <Text style={[styles.iconText, { color: isLiked ? '#FF7F30' : '#3D3D3D' }]}>
+              {formatNumber(item.likes)}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconContainer}>
-            <Ionicons name="eye" size={16} color="#3D3D3D" />
-            <Text style={styles.iconText}>{formatNumber(item.likes)}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconContainer}>
-            <Ionicons name="chatbubble" size={16} color="#3D3D3D" />
+            <CommentIcon width={16} height={16} />
             <Text style={styles.iconText}>{formatNumber(item.comments)}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconContainer}>
+            <ShareIcon width={16} height={16} />
+            <Text style={styles.iconText}>{formatNumber(item.views)}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.iconContainer}
             onPress={() => handleSave(item.id)}
           >
-            <Ionicons name="bookmark" size={16} color={isSaved ? '#FF5D01' : '#3D3D3D'} />
-            <Text style={styles.iconText}>Save</Text>
+            <SaveIcon width={16} height={16} color={isSaved ? '#FF5D01' : '#3D3D3D'} />
           </TouchableOpacity>
         </View>
       </View>
@@ -147,9 +131,20 @@ const PostsScreen: React.FC = () => {
 
   const TrendingRoute = () => (
     <FlatList
+      ListHeaderComponent={
+        <>
+          <Card percentage={20} />
+          <Image
+            source={require('@/assets/images/card.png')}
+            style={{ width: '100%', height: 170 }}
+          />
+        </>
+
+      }
       data={filteredPosts}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
+      contentContainerStyle={{ paddingBottom: 80 }}
       showsVerticalScrollIndicator={false}
     />
   );
@@ -174,28 +169,29 @@ const PostsScreen: React.FC = () => {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
       <View style={styles.header}>
-        <Text style={styles.appName}>Chanakaya</Text>
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={24} color="black" style={styles.searchIcon} />
+        <Text style={styles.appName}>Cn.</Text>
+        <View style={styles.searchInput}>
+          <View style={styles.searchContainer}>
+            <Ionicons name="search" size={17} color="#3D3D3D" />
+            <TextInput
+              placeholder="Search"
+              style={styles.searchTextInput}
+              placeholderTextColor="#888"
+            />
+          </View>
+          <FilterIcon width={16} height={16} color='#3D3D3D' />
+        </View>
+        <View style={styles.notificationContainer}>
+          <View style={styles.notificationBadge}>
+            <FlameIcon width={16} height={16} />
+            <Text style={styles.notificationText}>2</Text>
+          </View>
           <BellIcon width={20} height={20} />
         </View>
       </View>
-      <View style={styles.filterContainer}>
-        <Text style={styles.filterLabel}>Filter by Category:</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={selectedCategory}
-            onValueChange={(itemValue) => setSelectedCategory(itemValue)}
-            style={styles.picker}
-          >
-            {categories.map((category) => (
-              <Picker.Item key={category} label={category} value={category} />
-            ))}
-          </Picker>
-        </View>
-      </View>
+
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
@@ -222,7 +218,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 10,
     backgroundColor: '#fff',
@@ -230,27 +225,49 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ddd',
   },
   appName: {
-    fontSize: 20,
-    fontFamily: 'WorkSans_Bold',
+    fontSize: 24,
+    fontFamily: 'WorkSans_Bold', // Ensure you have this font loaded
+    color: '#000',
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginRight: 10,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  searchInput: {
-    backgroundColor: '#f2f2f2',
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    height: 30,
     flex: 1,
-    marginRight: 10,
   },
-  searchIcon: {
-    position: 'absolute',
-    right: 30,
-  },
-  notificationIcon: {
+  searchTextInput: {
+    fontFamily: 'WorkSans_Reg', // Ensure you have this font loaded
     marginLeft: 10,
+    flex: 1,
+  },
+  notificationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  notificationBadge: {
+    backgroundColor: '#FF7F30',
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    gap: 5,
+    paddingVertical: 2,
+    marginRight: 5,
+  },
+  notificationText: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'WorkSans_Medium', // Ensure you have this font loaded
   },
   tabBar: {
     backgroundColor: 'white',
@@ -294,15 +311,19 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   card: {
-    backgroundColor: '#FFDAC5',
-    borderRadius: 28,
-    margin: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    marginBottom: 15,
+    marginHorizontal: 10,
+    marginTop: 20,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 5,
   },
   avatar: {
     width: 40,
@@ -310,60 +331,64 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 10,
   },
+  headerTextContainer: {
+    flex: 1,
+  },
   username: {
-    fontSize: 18,
+    fontSize: 16,
+    color: '#000',
     fontFamily: 'WorkSans_SemiBold',
   },
-  usernameSecondary: {
+  timestamp: {
+    fontSize: 12,
+    color: '#888',
+    fontFamily: 'WorkSans_Reg',
+  },
+  followButton: {
+    backgroundColor: '#FF5D01',
+    borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  followButtonText: {
+    color: '#fff',
     fontFamily: 'WorkSans_Medium',
     fontSize: 12,
-    color: '#6F6F6F',
-  },
-  timestamp: {
-    fontFamily: 'WorkSans_Reg',
-    fontSize: 12,
-    color: '#6F6F6F',
-  },
-  ellipsisButton: {
-    position: 'absolute',
-    right: 10,
-    top: 10,
-  },
-  ellipsisIcon: {
-    position: 'absolute',
-    right: 10,
-    top: 10,
-  },
-  cardText: {
-    marginVertical: 10,
-    fontSize: 12,
-    fontFamily: 'WorkSans_Reg',
   },
   cardImage: {
     width: '100%',
-    height: 150,
-    borderRadius: 10,
+    height: 200,
+    marginBottom: 10,
   },
   cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  iconContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-  },
-  iconText: {
-    marginLeft: 5,
-    fontFamily: 'WorkSans_Reg',
-    color: '#3D3D3D',
+    paddingBottom: 10,
+    paddingHorizontal: 5,
   },
   likeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 20,
-    paddingHorizontal: 10,
     paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+  },
+  iconText: {
+    marginLeft: 5,
+    fontSize: 14,
+    color: '#3D3D3D',
+    fontFamily: 'WorkSans_Reg',
   },
 });
 
