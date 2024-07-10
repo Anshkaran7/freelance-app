@@ -94,7 +94,6 @@ const Post: React.FC = () => {
                                 useNativeControls
                                 style={styles.media}
                                 resizeMode={ResizeMode.CONTAIN}
-                                onPlaybackStatusUpdate={status => setStatus(() => status)}
                             />
                             <TouchableOpacity
                                 style={styles.playPauseButton}
