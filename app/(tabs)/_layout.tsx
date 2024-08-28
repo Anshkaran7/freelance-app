@@ -4,6 +4,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { FavIcon, HomeIcon, Icon2, PlusIcon, ProfileIcon } from '@/components/navigation/Icon';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -72,9 +73,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="fav"
         options={{
-          title: 'Favorites',
+          title: 'Notifications',
           tabBarIcon: ({ color }) => (
-            <FavIcon color={color} />
+            <Ionicons name="notifications-outline" size={24} color={color} />
           ),
         }}
       />

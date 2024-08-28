@@ -1,8 +1,9 @@
 // components/Header.tsx
 import React from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FilterIcon, FlameIcon, BellIcon } from '@/components/navigation/Icon';
+import { router } from 'expo-router';
 
 const Header = ({ onFilterPress }: { onFilterPress: () => void }) => {
     return (
@@ -26,7 +27,11 @@ const Header = ({ onFilterPress }: { onFilterPress: () => void }) => {
                     <FlameIcon width={16} height={16} />
                     <Text style={styles.notificationText}>2</Text>
                 </View>
-                <BellIcon width={20} height={20} />
+                <Pressable onPress={
+                    () => router.push('/(tabs)/fav')
+                }>
+                    <BellIcon width={20} height={20} color="#3D3D3D" />
+                </Pressable>
             </View>
         </View>
     );
